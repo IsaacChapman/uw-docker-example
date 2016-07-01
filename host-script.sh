@@ -21,6 +21,10 @@ trap teardown EXIT
 sudo /solano/agent/docker daemon --storage-driver=vfs &>/var/log/docker.log &
 sleep 10
 
+echo "### /var/log/docker.log ###"
+sudo cat /var/log/docker.log
+
+
 ps afxu
 sudo docker ps
 sudo docker images
