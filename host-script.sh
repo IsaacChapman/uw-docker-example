@@ -13,21 +13,19 @@ ls -la /var/run/
 
 # Ensure inner docker stops to prevent loopback device 
 function teardown {
-  sudo kill -9 `cat /var/run/docker-in-docker.pid`
+  kill -9 `cat /var/run/docker-in-docker.pid`
+  echo "### /var/log/docker.log ###"
+  cat /var/log/docker.log
 }
 trap teardown EXIT
 
 # Start docker (vfs necessary)
-sudo /solano/agent/docker daemon --storage-driver=vfs &>/var/log/docker.log &
+/solano/agent/docker daemon --storage-driver=vfs &>/var/log/docker.log &
 sleep 10
 
-echo "### /var/log/docker.log ###"
-sudo cat /var/log/docker.log
-
-
 ps afxu
-sudo docker ps
-sudo docker images
+docker ps
+docker images
 
 # Pull docker image from registry
 sudo docker pull mysql:latest
