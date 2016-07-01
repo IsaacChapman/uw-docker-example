@@ -22,6 +22,7 @@ sleep 5
 
 # Hello World example
 docker pull hello-world
+/solano/agent/docker run hello-world:latest
 exit
 # Mysql example below
 
