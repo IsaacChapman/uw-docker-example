@@ -11,6 +11,9 @@ ls -la
 ps afxu
 
 # Start docker
+export DOCKER_DAEMON_ARGS="--host=unix:///var/run/docker.sock --storage-driver=aufsext --dns=8.8.8.8 --icc=false"
+export DOCKER_GRAPH_PATH=/var/lib/docker-dind
+mkdir -p $DOCKER_GRAPH_PATH
 /usr/local/repos/wrapdocker /solano/agent/docker
 
 # Pull docker image from registry
