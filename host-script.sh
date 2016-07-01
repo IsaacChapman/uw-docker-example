@@ -3,21 +3,16 @@
 set -e # Exit on error
 set -x # Echo on for logging
 
-# Debugging info
-env
-pwd
-ifconfig
-ls -la
-ps afxu
-ls -la /var/run/
-
 # Ensure inner docker stops to prevent loopback device 
 function teardown {
+  set +e
   kill -9 `cat /var/run/docker-in-docker.pid`
   echo "### /var/log/docker.log ###"
   cat /var/log/docker.log
 }
 trap teardown EXIT
+
+sleep 180
 
 # Start docker (vfs necessary)
 /solano/agent/docker daemon --storage-driver=vfs &>/var/log/docker.log &
