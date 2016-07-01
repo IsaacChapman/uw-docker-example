@@ -20,19 +20,24 @@ trap teardown EXIT
 apt-get install -y mysql-client
 
 # Start docker
-/solano/agent/docker daemon $DOCKER_DAEMON_ARGS &>/var/log/docker.log &
+docker daemon $DOCKER_DAEMON_ARGS &>/var/log/docker.log &
 sleep 5
 
 # Pull docker image from registry
-docker pull mysql:latest
+docker pull mysql:5.7
+
+docker images # DEBUG
 
 # Start docker container and capture its id
-CID=$(docker run -d -v /usr/local/repos/map_vol:/src -p 127.0.0.1:3306:3306 -e MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD} mysql:latest)
+CID=$(docker run -d -v /usr/local/repos/map_vol:/src -p 127.0.0.1:3306:3306 -e MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD} mysql:5.7)
 DOCKER_PID=$!
 echo $DOCKER_PID > /var/run/docker-in-docker.pid
 
 # Give mysql a couple of seconds to startup
 sleep 5
+
+docker ps # DEBUG
+netstat -plant # DEBUG
 
 # Show container databases from host
 mysql -u root -p${MYSQL_ROOT_PASSWORD} -h 127.0.0.1 -P 3306 -e 'show databases'
