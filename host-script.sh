@@ -44,7 +44,7 @@ docker ps # DEBUG
 netstat -plant # DEBUG
 
 set +e
-ping `cat /var/run/docker-in-docker.ip`
+ping -c 4 `cat /var/run/docker-in-docker.ip`
 
 # Connecting to docker container
 mysql -u root -p${MYSQL_ROOT_PASSWORD} -h `cat /var/run/docker-in-docker.ip` -P 3306 -e 'show databases'
