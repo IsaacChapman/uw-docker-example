@@ -30,7 +30,7 @@ docker pull mysql:5.7
 docker images # DEBUG
 
 # Start docker container and capture its id
-CID=$(docker run -d -v /usr/local/repos/map_vol:/src -e MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD} mysql:5.7)
+CID=$(docker run -d -v /usr/local/repos/map_vol:/src -p 3306:3306 -e MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD} mysql:5.7)
 DOCKER_PID=$!
 echo $CID > /var/run/docker-in-docker.cid
 echo $DOCKER_PID > /var/run/docker-in-docker.pid
@@ -43,8 +43,14 @@ sleep 5
 docker ps # DEBUG
 netstat -plant # DEBUG
 
-# Show container databases from host
+set +e
+ping `cat /var/run/docker-in-docker.ip`
+
+# Connecting to docker container
 mysql -u root -p${MYSQL_ROOT_PASSWORD} -h `cat /var/run/docker-in-docker.ip` -P 3306 -e 'show databases'
+
+# Connecting to host mounted port
+mysql -u root -p${MYSQL_ROOT_PASSWORD} -h 127.0.0.1 -P 3306 -e 'show databases'
 
 # Execute script on host
 /usr/local/repos/map_vol/hello.sh 'from host'
