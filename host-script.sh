@@ -11,7 +11,6 @@ ls -la
 ps afxu
 
 # Start docker
-export DOCKER_DAEMON_ARGS="--storage-driver=devicemapper --dns=8.8.8.8"
 export DOCKER_GRAPH_PATH=/var/lib/docker-dind
 mkdir -p $DOCKER_GRAPH_PATH
 /usr/local/repos/wrapdocker /solano/agent/docker
