@@ -3,7 +3,7 @@
 set -e # Exit on error
 set -x # Echo on for logging
 
-# Ensure inner docker stops to prevent loopback device 
+# Ensure inner docker stops to prevent loopback device depletion
 function teardown {
   set +e
   kill -9 `cat /var/run/docker-in-docker.pid`
@@ -12,32 +12,26 @@ function teardown {
 }
 trap teardown EXIT
 
-sleep 180
-
 # Start docker (vfs necessary)
 /solano/agent/docker daemon --storage-driver=vfs &>/var/log/docker.log &
-sleep 10
-
-ps afxu
-docker ps
-docker images
+sleep 2
 
 # Pull docker image from registry
 sudo docker pull mysql:latest
 
 # Start docker container and capture its id
-CID=$(sudo docker run -d -v /var/lib/docker.sock:/var/lib/docker.sock -v /usr/local/repos/map_vol:/src -e MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD mysql:latest)
+CID=$(docker run -d -v /usr/local/repos/map_vol:/src -e MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD} mysql:latest)
 DOCKER_PID=#!
-echo $DOCKER_PID | sudo tee /var/run/docker-manually-set.pid
+echo $DOCKER_PID > /var/run/docker-in-docker.pid
 
 # Give mysql a couple of seconds to startup
-sleep 10
+sleep 3
 
 # Show databases
-sudo docker exec -it $CID bash -c mysql -u root -p${MYSQL_ROOT_PASSWORD} -e 'show databases'
+docker exec -it $CID bash -c mysql -u root -p${MYSQL_ROOT_PASSWORD} -e 'show databases'
 
 # Execute script on host
 /usr/local/repos/map_vol/hello.sh 'from host'
 
 # Execute script on docker container
-sudo docker exec -it $CID bash -c /src/hello.sh 'from docker'
+docker exec -it $CID bash -c /src/hello.sh 'from docker'
