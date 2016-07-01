@@ -3,6 +3,10 @@
 set -e # Exit on error
 set -x # Echo on for logging
 
+# Debugging info
+env
+pwd
+
 # Pull docker image from registry
 docker pull mysql:latest
 
