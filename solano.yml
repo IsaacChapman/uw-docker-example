@@ -1,3 +1,5 @@
+system:
+  docker: true
 plan:
   - default
 profiles:
