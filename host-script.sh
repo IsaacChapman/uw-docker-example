@@ -16,6 +16,9 @@ function teardown {
 }
 trap teardown EXIT
 
+# Install mysql client in case it isn't already installed
+apt-get install -y mysql-client
+
 # Start docker
 /solano/agent/docker daemon $DOCKER_DAEMON_ARGS &>/var/log/docker.log &
 sleep 5
@@ -33,9 +36,6 @@ sleep 5
 
 # Show container databases from host
 mysql -u root -p${MYSQL_ROOT_PASSWORD} -h 127.0.0.1 -P 3306 -e 'show databases'
-
-# Show container databases from docker container
-docker exec $CID /usr/bin/mysql -u root -p${MYSQL_ROOT_PASSWORD} -e 'show databases'
 
 # Execute script on host
 /usr/local/repos/map_vol/hello.sh 'from host'
