@@ -2,24 +2,7 @@ plan:
   - default
 profiles:
   default:
-    script: |
-      set -e # Exit on error
-      set -x # Echo on for logging
-      # Just for example purposes, create directory+script to volume map
-      mkdir -p /tmp/docker/vol
-      echo '#!/bin/sh' > /tmp/docker/vol/hello.sh
-      echo 'echo Goodbye!' >> /tmp/docker/vol/hello.sh
-      chmod +x /tmp/docker/vol/hello.sh
-      # Pull docker image from registry
-      docker pull mysql:latest
-      # Start docker container and capture its id
-      CID=$(docker run -d -v /tmp/docker/vol:/src/test -e MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD mysql:latest)
-      # Give mysql a couple of seconds to startup
-      sleep 10
-      # Show databases
-      docker exec -it $CID bash -c mysql -u root -p${MYSQL_ROOT_PASSWORD} -e 'show databases'
-      # Execute script
-      docker exec -it $CID bash -c /src/test/hello.sh
+    script: /usr/local/repos/host-script.sh
     environment:
       'PATH': '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
       'MYSQL_ROOT_PASSWORD': 'my-super-secret-password'
