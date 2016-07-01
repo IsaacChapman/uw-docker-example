@@ -38,8 +38,8 @@ echo $DOCKER_PID > /var/run/docker-in-docker.pid
 IP_ADDR=$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' $CID)
 echo $IP_ADDR > /var/run/docker-in-docker.ip
 
-# Give mysql a couple of seconds to startup
-sleep 10
+# Give mysql a couple of seconds to startup (the faster the host, the less it needs to sleep here)
+sleep 20
 
 # Connecting to docker container
 mysql -u root -p${MYSQL_ROOT_PASSWORD} -h `cat /var/run/docker-in-docker.ip` -P 3306 -e 'show databases'
