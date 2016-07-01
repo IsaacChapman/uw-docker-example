@@ -3,25 +3,22 @@
 set -e # Exit on error
 set -x # Echo on for logging
 
-# wrapdocker variables
-DOCKER_DAEMON_ARGS="--storage-driver=vfs"
-LOG="file"
-DOCKER_GRAPH_PATH="/var/lib/docker/dind"
-mkdir -p $DOCKER_GRAPH_PATH
+# Docker daemon args
+DOCKER_DAEMON_ARGS="--storage-driver=vfs -g /var/lib/docker/dind"
+mkdir -p /var/lib/docker/dind
 
 # Ensure inner docker stops to prevent loopback device depletion
-#function teardown {
-#  set +e
-#  kill -9 `cat /var/run/docker-in-docker.pid`
-#  echo "### /var/log/docker.log ###"
-#  cat /var/log/docker.log
-#}
-#trap teardown EXIT
+function teardown {
+  set +e
+  kill -9 `cat /var/run/docker-in-docker.pid`
+  echo "### /var/log/docker.log ###"
+  cat /var/log/docker.log
+}
+trap teardown EXIT
 
 # Start docker
-/usr/local/repos/wrapdocker /solano/agent/docker
-#/solano/agent/docker daemon --storage-driver=vfs &>/var/log/docker.log &
-sleep 2
+/solano/agent/docker daemon $DOCKER_DAEMON_ARGS &>/var/log/docker.log &
+sleep 5
 
 # Pull docker image from registry
 docker pull mysql:latest
@@ -32,7 +29,7 @@ DOCKER_PID=$!
 echo $DOCKER_PID > /var/run/docker-in-docker.pid
 
 # Give mysql a couple of seconds to startup
-sleep 3
+sleep 5
 
 # Show databases
 docker exec $CID bash -c mysql -u root -p${MYSQL_ROOT_PASSWORD} -e 'show databases'
