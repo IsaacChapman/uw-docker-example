@@ -8,6 +8,7 @@ env
 pwd
 ifconfig
 ls -la
+ps afxu
 
 # Pull docker image from registry
 docker pull mysql:latest
