@@ -20,28 +20,21 @@ trap teardown EXIT
 /solano/agent/docker daemon $DOCKER_DAEMON_ARGS &>/var/log/docker.log &
 sleep 5
 
-# Hello World example
-docker pull hello-world
-/solano/agent/docker run hello-world:latest
-exit
-# Mysql example below
-
 # Pull docker image from registry
 docker pull mysql:latest
 
 # Start docker container and capture its id
-CID=$(docker run -d -v /usr/local/repos/map_vol:/src -e MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD} mysql:latest)
+CID=$(docker run -d -v /usr/local/repos/map_vol:/src -p 127.0.0.1:3306:3306 -e MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD} mysql:latest)
 DOCKER_PID=$!
 echo $DOCKER_PID > /var/run/docker-in-docker.pid
 
 # Give mysql a couple of seconds to startup
 sleep 5
 
-docker ps
-docker images
-docker exec -t $CID netstat -plant
+# Show container databases from host
+mysql -u root -p${MYSQL_ROOT_PASSWORD} -h 127.0.0.1 -P 3306 -e 'show databases'
 
-# Show databases
+# Show container databases from docker container
 docker exec $CID /usr/bin/mysql -u root -p${MYSQL_ROOT_PASSWORD} -e 'show databases'
 
 # Execute script on host
