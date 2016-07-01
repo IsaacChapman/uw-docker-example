@@ -32,10 +32,10 @@ echo $DOCKER_PID > /var/run/docker-in-docker.pid
 sleep 5
 
 # Show databases
-docker exec $CID bash -c mysql -u root -p${MYSQL_ROOT_PASSWORD} -e 'show databases'
+docker exec $CID /usr/bin/mysql -u root -p${MYSQL_ROOT_PASSWORD} -e 'show databases'
 
 # Execute script on host
 /usr/local/repos/map_vol/hello.sh 'from host'
 
 # Execute script on docker container
-docker exec $CID bash -c /src/hello.sh 'from docker'
+docker exec $CID /src/hello.sh 'from docker'
