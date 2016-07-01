@@ -13,18 +13,13 @@ ls -la /var/run/
 
 # Ensure inner docker stops to prevent loopback device 
 function teardown {
-  set +e # So all of the teardown commands run (may not be necessary)
-  ls -la /var/run/
-  kill -9 `cat /var/run/docker.pid`
-  kill -9 `cat /var/run/docker-manually-set.pid`
-  service docker stop # May require adding an init script
+  kill -9 `cat /var/run/docker-in-docker.pid`
 }
 trap teardown EXIT
 
-# Start docker
-export DOCKER_GRAPH_PATH=/var/lib/docker-dind
-mkdir -p $DOCKER_GRAPH_PATH
-/usr/local/repos/wrapdocker /solano/agent/docker
+# Start docker (vfs necessary)
+/solano/agent/docker daemon --storage-driver=vfs &>/var/log/docker.log &
+sleep 2
 
 # Pull docker image from registry
 docker pull mysql:latest
