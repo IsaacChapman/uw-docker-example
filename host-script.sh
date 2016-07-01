@@ -10,6 +10,9 @@ ifconfig
 ls -la
 ps afxu
 
+# Start docker
+/usr/local/repos/wrapdocker /solano/agent/docker
+
 # Pull docker image from registry
 docker pull mysql:latest
 
