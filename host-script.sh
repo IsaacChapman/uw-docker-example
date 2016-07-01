@@ -4,7 +4,7 @@ set -e # Exit on error
 set -x # Echo on for logging
 
 # Docker daemon args
-DOCKER_DAEMON_ARGS="--storage-driver=vfs -g /var/lib/docker/dind"
+DOCKER_DAEMON_ARGS="--storage-driver=aufsext -g /var/lib/docker/dind"
 mkdir -p /var/lib/docker/dind
 
 # Ensure inner docker stops to prevent loopback device depletion
@@ -20,6 +20,11 @@ trap teardown EXIT
 /solano/agent/docker daemon $DOCKER_DAEMON_ARGS &>/var/log/docker.log &
 sleep 5
 
+# Hello World example
+docker pull hello-world
+exit
+# Mysql example below
+
 # Pull docker image from registry
 docker pull mysql:latest
 
@@ -33,7 +38,7 @@ sleep 5
 
 docker ps
 docker images
-docker exec -t $CID /bin/netstat -plant
+docker exec -t $CID netstat -plant
 
 # Show databases
 docker exec $CID /usr/bin/mysql -u root -p${MYSQL_ROOT_PASSWORD} -e 'show databases'
