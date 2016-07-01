@@ -31,6 +31,8 @@ echo $DOCKER_PID > /var/run/docker-in-docker.pid
 # Give mysql a couple of seconds to startup
 sleep 5
 
+docker exec $CID /bin/netstat -plant
+
 # Show databases
 docker exec $CID /usr/bin/mysql -u root -p${MYSQL_ROOT_PASSWORD} -e 'show databases'
 
