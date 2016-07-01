@@ -4,6 +4,6 @@ profiles:
   default:
     script: /usr/local/repos/host-script.sh
     environment:
-      'PATH': '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
+      'PATH': '/solano/agent:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
       'MYSQL_ROOT_PASSWORD': 'my-super-secret-password'
     timeout: 9000 # in seconds

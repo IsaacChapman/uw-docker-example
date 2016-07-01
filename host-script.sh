@@ -6,6 +6,8 @@ set -x # Echo on for logging
 # Debugging info
 env
 pwd
+ifconfig
+ls -la
 
 # Pull docker image from registry
 docker pull mysql:latest
