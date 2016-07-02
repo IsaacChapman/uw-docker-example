@@ -1,5 +1,3 @@
-# # uw-docker-example
-
 # Example of using Docker with Solano CI Universal Workers
 
 This repo demonstrates using [Docker](https://www.docker.com/) containers in
